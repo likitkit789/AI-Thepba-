@@ -1,1 +1,504 @@
 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baccarat Compact AI & Labouchere</title>
+    <style>
+        body {
+            background-color: #121214;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 15px;
+            margin: 0;
+        }
+        .container {
+            background-color: #1a1a1e;
+            width: 280px; /* บีบหน้าจอให้แคบลงสไตล์มินิ */
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h1, h2 {
+            color: #00FFCC;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        h2 { color: #FFCC00; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .predict-box {
+            background-color: #23232a;
+            padding: 8px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .title-sm {
+            color: #aaaaaa;
+            font-size: 11px;
+            margin: 0 0 3px 0;
+        }
+        .next-bet {
+            font-size: 24px; /* ปรับขนาดตัวอักษรลงมาให้พอดี */
+            font-weight: bold;
+            margin: 2px 0;
+            color: #ffffff;
+        }
+        .advice-box {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px;
+            border-radius: 6px;
+            margin-top: 4px;
+            background-color: #2c2c35;
+        }
+        .winrate {
+            color: #FFCC00;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        .display-board {
+            background-color: #23232a;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: left;
+            min-height: 50px;
+            margin-bottom: 10px;
+        }
+        .board-row {
+            margin-bottom: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .color-p { color: #3498DB; font-weight: bold; }
+        .color-b { color: #E74C3C; font-weight: bold; }
+        .color-t { color: #2ECC71; font-weight: bold; }
+        
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .btn {
+            flex: 1;
+            padding: 8px; /* บีบขนาดปุ่มกดให้เล็กลงมาก */
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-p { background-color: #2980b9; }
+        .btn-b { background-color: #c0392b; }
+        .btn-t { background-color: #27ae60; }
+        
+                .input-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            width: 48%; /* แบ่งสัดส่วนให้กะทัดรัดพอดีขอบ */
+        }
+        .input-group label {
+            font-size: 10px;
+            color: #aaa;
+            margin-bottom: 2px;
+            white-space: nowrap;
+        }
+        .input-group input {
+            background-color: #23232a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            box-sizing: border-box;
+            max-width: 115px; /* ล็อกขนาดไม่ให้ยื่นล้นขอบขวา */
+            width: 100%;
+        }
+
+        .summary-box {
+            background-color: #23232a;
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+            text-align: left;
+            font-size: 11px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .highlight-money {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00FFCC;
+        }
+        
+        .btn-win { background-color: #2ecc71; padding: 6px; font-size: 12px; }
+        .btn-lose { background-color: #e74c3c; padding: 6px; font-size: 12px; }
+        .btn-action { background-color: #55555c; font-size: 11px; padding: 5px; }
+        
+        .labouchere-seq-box {
+            background-color: #23232a;
+            border: 1px dashed #FFCC00;
+            border-radius: 6px;
+            padding: 6px;
+            margin-top: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #FFCC00;
+            font-weight: bold;
+            text-align: center;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ฝั่งซ้าย: โปรแกรมคำนวณสูตรออโต้พร้อมคำแนะนำ -->
+<div class="container">
+    <h1>EVOLUTION AI BOT</h1>
+    <div class="predict-box">
+        <p class="title-sm">NEXT BET / ตาถัดไป</p>
+        <div id="nextBetVal" class="next-bet">WAITING</div>
+        <!-- ระบบแจ้งเตือนจุดเสี่ยงเพิ่มใหม่ -->
+        <div id="adviceVal" class="advice-box" style="color: #ffffff;">รอสถิติตั้งต้น</div>
+    </div>
+    <div id="winRateVal" class="winrate">Win Rate (สูตรแม่นยำ): 0%</div>
+    <div class="display-board">
+        <div class="board-row"><strong>ผลเกม:</strong> <span id="historyText">-</span></div>
+        <div class="board-row"><strong>DNA:</strong> <span id="dnaText">-</span></div>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-p" onclick="addScore('P')">P</button>
+        <button class="btn btn-t" onclick="addScore('T')">T</button>
+        <button class="btn btn-b" onclick="addScore('B')">B</button>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-action" onclick="undoScore()">Undo สกอร์</button>
+        <button class="btn btn-action" onclick="clearAllScores()">ล้างบอร์ด</button>
+    </div>
+</div>
+
+<!-- ฝั่งขวา: ระบบการเดินเงินแบบลาบูแชร์มินิ -->
+<div class="container">
+    <h2>LABOUCHERE MINI</h2>
+    
+    <div class="input-grid">
+        <div class="input-group">
+            <label>ทุนเดิม (฿)</label>
+            <input type="number" id="inputCapital" value="1000" oninput="resetLabouchereSequence()">
+        </div>
+        <div class="input-group">
+            <label>ไม้เริ่ม (฿)</label>
+            <input type="number" id="inputBaseUnit" value="50" oninput="resetLabouchereSequence()">
+        </div>
+        <div class="input-group">
+            <label>เป้ากำไร (%)</label>
+            <input type="number" id="inputTargetProfit" value="20" oninput="resetLabouchereSequence()">
+        </div>
+        <div class="input-group">
+            <label>ตัดขาดทุน (%)</label>
+            <input type="number" id="inputMaxLoss" value="50" oninput="resetLabouchereSequence()">
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-row"><span>เป้าหมาย:</span> <span id="textTargetVal" style="color:#2ecc71;">0 ฿</span></div>
+        <div class="summary-row"><span>Stop Loss:</span> <span id="textLossVal" style="color:#e74c3c;">0 ฿</span></div>
+        <div class="summary-row"><span>กำไรสุทธิ:</span> <span id="textCurrentProfit">0 ฿</span></div>
+        <div class="summary-row" style="margin-top: 3px; border-top: 1px solid #333; padding-top: 3px;">
+            <strong>เงินรวม:</strong> <span id="textTotalCapital" class="highlight-money">1,000 ฿</span>
+        </div>
+    </div>
+
+    <div class="predict-box" style="border: 1px solid #FFCC00; padding: 6px;">
+        <p class="title-sm" style="color:#FFCC00; margin: 0;">จำนวนเงินตาถัดไป</p>
+        <div id="textNextBetAmount" class="next-bet" style="color:#FFCC00; font-size: 20px;">0 ฿</div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-win" onclick="moneyResult('WIN')">WIN</button>
+        <button class="btn btn-lose" onclick="moneyResult('LOSE')">LOSE</button>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-action" onclick="undoMoney()">Undo เดินเงิน</button>
+        <button class="btn btn-action" onclick="resetLabouchereSequence()">รีเซ็ตเงิน</button>
+    </div>
+
+    <div style="text-align: left; margin-top: 5px;">
+        <p class="title-sm">แถวเลขลาบูแชร์ปัจจุบัน:</p>
+        <div id="textSequenceDisplay" class="labouchere-seq-box">[]</div>
+    </div>
+</div>
+<script>
+    // --- ระบบบอท AI คำนวณสูตรสถิติและวิเคราะห์จังหวะเสี่ยง ---
+    let history = [];
+    let dnaHistory = [];
+    let currentPrediction = "WAITING";
+    let scoreBackupStack = [];
+
+        function addScore(result) {
+        // 1. สำรองข้อมูลสำหรับปุ่ม Undo
+        scoreBackupStack.push({ history: [...history], dnaHistory: [...dnaHistory], currentPrediction });
+        
+        // 2. บันทึกผลลัพธ์ตาปัจจุบันลงประวัติเกมก่อน เพื่อให้ข้อมูลนิ่ง
+        history.push(result);
+        if (history.length > 25) history.shift();
+
+        // 3. ย้อนกลับไปตรวจเช็กและบันทึกผล DNA (ถูก/ผิด) ของคำทำนายล่าสุด
+        if (currentPrediction === "PLAYER" || currentPrediction === "BANKER") {
+            let predShort = currentPrediction === "PLAYER" ? "P" : "B";
+            if (result !== "T") { // ผลออกเสมอ ไม่นำมาคิด DNA
+                if (result === predShort) {
+                    dnaHistory.push("✔️");
+                } else {
+                    dnaHistory.push("❌"); // ตาที่ทายน้ำเงิน แต่ออกแดง จะบันทึกเป็น ผิด ทันที
+                }
+            }
+        }
+        if (dnaHistory.length > 25) dnaHistory.shift();
+
+        // 4. สั่งให้ AI ประมวลผลและคำนวณตาถัดไป
+        runAiLogic();
+    }
+
+    function runAiLogic() {
+        let nextBet = "WAITING";
+        let nextColor = "#FFFFFF";
+
+        // 1. ตรรกะสูตรพื้นฐานมังกร/ปิงปอง
+        if (history.length >= 2) {
+            if (history[history.length - 1] === history[history.length - 2] && history[history.length - 1] !== "T") {
+                nextBet = history[history.length - 1] === "P" ? "PLAYER" : "BANKER";
+            } else {
+                nextBet = history[history.length - 1] === "P" ? "BANKER" : "PLAYER";
+            }
+        }
+
+        if (nextBet === "PLAYER") nextColor = "#3498DB";
+        if (nextBet === "BANKER") nextColor = "#E74C3C";
+
+        currentPrediction = nextBet;
+
+        // 2. ระบบ AI Advice แจ้งเตือนความเสี่ยงเพื่อไม่ให้เสียติดกัน
+        let adviceText = "รอสถิติตั้งต้น";
+        let adviceColor = "#ffffff";
+        
+        if (history.length < 4) {
+            adviceText = "⏳ รอเก็บสถิติเพิ่ม";
+            adviceColor = "#aaaaaa";
+        } else {
+            // เช็กประวัติ DNA ล่าสุดเพื่อดูความนิ่งของห้อง
+            let lastThreeDna = dnaHistory.slice(-3);
+            let wrongCount = lastThreeDna.filter(x => x === "❌").length;
+            
+            // ตรรกะเช็กไพ่สวิงหลุดล็อก: หากสูตรผิดติดต่อกัน 2-3 ตา หรือห้องกำลังเปลี่ยนรูปแบบ
+            if (wrongCount >= 2) {
+                adviceText = "🛑 เว้นข้าม! สูตรหลุดทาง";
+                adviceColor = "#E74C3C"; // สีแดง เตือนภัยให้หยุดดูเชิง
+            } 
+            // ตรรกะตามมังกรยาว: สีแดงหรือน้ำเงินออกติดต่อกัน 4 ตาขึ้นไป
+            else if (history.slice(-4).every(x => x === "P") || history.slice(-4).every(x => x === "B")) {
+                adviceText = "🔥 ลุยได้! มังกรกำลังมา";
+                adviceColor = "#2ECC71"; // สีเขียว มีความมั่นใจสูง
+            } 
+            // จังหวะปกติ สูตรกำลังเดินดี
+            else {
+                adviceText = "✔️ ลงทุนเบาๆ ตามสูตร";
+                adviceColor = "#FFCC00"; // สีเหลือง แนะนำแทงสเต็ปปกติ
+            }
+        }
+
+        // อัปเดตข้อมูลแสดงผลในส่วนบอท AI
+        document.getElementById("nextBetVal").innerText = nextBet;
+        document.getElementById("nextBetVal").style.color = nextColor;
+        document.getElementById("adviceVal").innerText = adviceText;
+        document.getElementById("adviceVal").style.color = adviceColor;
+
+        let winRate = 0;
+        if (dnaHistory.length > 0) {
+            let wins = dnaHistory.filter(x => x === "✔️").length;
+            winRate = Math.floor((wins / dnaHistory.length) * 100);
+        }
+        document.getElementById("winRateVal").innerText = `Win Rate: ${winRate}%`;
+        
+        let historyHTML = history.map(x => {
+            if (x === 'P') return `<span class="color-p">P</span>`;
+            if (x === 'B') return `<span class="color-b">B</span>`;
+            return `<span class="color-t">T</span>`;
+        }).join(" ");
+        
+        document.getElementById("historyText").innerHTML = historyHTML;
+        document.getElementById("dnaText").innerText = dnaHistory.join(" ");
+    }
+
+    function undoScore() {
+        if (scoreBackupStack.length > 0) {
+            let backup = scoreBackupStack.pop();
+            history = backup.history;
+            dnaHistory = backup.dnaHistory;
+            currentPrediction = backup.currentPrediction;
+            runAiLogic();
+        }
+    }
+
+    function clearAllScores() {
+        history = []; dnaHistory = []; scoreBackupStack = []; currentPrediction = "WAITING";
+        document.getElementById("nextBetVal").innerText = "WAITING";
+        document.getElementById("nextBetVal").style.color = "#FFFFFF";
+        document.getElementById("adviceVal").innerText = "รอสถิติตั้งต้น";
+        document.getElementById("adviceVal").style.color = "#ffffff";
+        document.getElementById("winRateVal").innerText = "Win Rate: 0%";
+        document.getElementById("historyText").innerText = "-";
+        document.getElementById("dnaText").innerText = "-";
+    }
+    // --- ระบบการเดินเงินแบบลาบูแชร์มินิ (Labouchere Money System) ---
+    let laboSequence = [];
+    let netProfitValue = 0;
+    let financeBackupStack = [];
+
+    function resetLabouchereSequence() {
+        let baseBet = parseFloat(document.getElementById("inputBaseUnit").value) || 10;
+        let capital = parseFloat(document.getElementById("inputCapital").value) || 1000;
+        let targetPct = parseFloat(document.getElementById("inputTargetProfit").value) || 20;
+        
+        let targetProfitAmt = (capital * targetPct) / 100;
+        let totalUnitsNeeded = Math.ceil(targetProfitAmt / baseBet);
+        
+        laboSequence = [];
+        if (totalUnitsNeeded > 0) {
+            let rem = totalUnitsNeeded;
+            while (rem > 0) {
+                if (rem >= 2) {
+                    laboSequence.push(1);
+                    rem -= 1;
+                } else {
+                    laboSequence.push(rem);
+                    rem = 0;
+                }
+            }
+            if(laboSequence.length === 0) laboSequence = [1];
+        } else {
+            laboSequence = [];
+        }
+
+        netProfitValue = 0;
+        financeBackupStack = [];
+        
+        updateFinanceUI();
+    }
+
+    function calculateNextBetUnits() {
+        if (laboSequence.length === 0) return 0;
+        if (laboSequence.length === 1) return laboSequence[0];
+        return laboSequence[0] + laboSequence[laboSequence.length - 1];
+    }
+
+    function moneyResult(status) {
+        let baseBet = parseFloat(document.getElementById("inputBaseUnit").value) || 10;
+        let betUnits = calculateNextBetUnits();
+        let actualBetAmount = betUnits * baseBet;
+
+        if (betUnits === 0) {
+            alert("เป้าหมายสำเร็จแล้ว! โปรดกดรีเซ็ตตารางเพื่อเริ่มชุดใหม่");
+            return;
+        }
+
+        financeBackupStack.push({
+            laboSequence: [...laboSequence],
+            netProfitValue: netProfitValue
+        });
+
+        if (status === "WIN") {
+            netProfitValue += actualBetAmount;
+            if (laboSequence.length >= 2) {
+                laboSequence.pop();
+                laboSequence.shift();
+            } else {
+                laboSequence = [];
+            }
+        } else if (status === "LOSE") {
+            netProfitValue -= actualBetAmount;
+            laboSequence.push(betUnits);
+        }
+
+        updateFinanceUI();
+    }
+
+    function undoMoney() {
+        if (financeBackupStack.length > 0) {
+            let backup = financeBackupStack.pop();
+            laboSequence = backup.laboSequence;
+            netProfitValue = backup.netProfitValue;
+            updateFinanceUI();
+        }
+    }
+
+    function updateFinanceUI() {
+        let capital = parseFloat(document.getElementById("inputCapital").value) || 0;
+        let baseBet = parseFloat(document.getElementById("inputBaseUnit").value) || 10;
+        let targetPct = parseFloat(document.getElementById("inputTargetProfit").value) || 0;
+        let lossPct = parseFloat(document.getElementById("inputMaxLoss").value) || 0;
+
+        let targetProfitAmt = (capital * targetPct) / 100;
+        let maxLossAmt = (capital * lossPct) / 100;
+
+        document.getElementById("textTargetVal").innerText = `${targetProfitAmt.toLocaleString()} ฿`;
+        document.getElementById("textLossVal").innerText = `${(capital - maxLossAmt).toLocaleString()} ฿`;
+
+        let totalCurrent = capital + netProfitValue;
+        let currentPct = capital > 0 ? ((netProfitValue / capital) * 100).toFixed(1) : 0;
+
+        let profitTextColor = netProfitValue >= 0 ? "#2ecc71" : "#e74c3c";
+        let prefix = netProfitValue >= 0 ? "+" : "";
+        
+        document.getElementById("textCurrentProfit").innerText = `${prefix}${netProfitValue.toLocaleString()} ฿ (${prefix}${currentPct}%)`;
+        document.getElementById("textCurrentProfit").style.color = profitTextColor;
+        document.getElementById("textTotalCapital").innerText = `${totalCurrent.toLocaleString()} ฿`;
+
+        let nextUnits = calculateNextBetUnits();
+        let nextBetAmt = nextUnits * baseBet;
+        
+        if (laboSequence.length === 0) {
+            document.getElementById("textNextBetAmount").innerText = "SUCCESS!";
+            document.getElementById("textNextBetAmount").style.color = "#2ecc71";
+        } else {
+            document.getElementById("textNextBetAmount").innerText = `${nextBetAmt.toLocaleString()} ฿`;
+            document.getElementById("textNextBetAmount").style.color = "#FFCC00";
+        }
+
+        if (laboSequence.length === 0 || netProfitValue >= targetProfitAmt) {
+            document.getElementById("textTotalCapital").style.color = "#2ecc71";
+        } else if (totalCurrent <= (capital - maxLossAmt)) {
+            document.getElementById("textTotalCapital").style.color = "#e74c3c";
+        } else {
+            document.getElementById("textTotalCapital").style.color = "#00FFCC";
+        }
+
+        document.getElementById("textSequenceDisplay").innerText = laboSequence.length > 0 ? `[ ${laboSequence.join("-")} ]` : "CLEAR!";
+    }
+
+    resetLabouchereSequence();
+</script>
+</body>
+</html>

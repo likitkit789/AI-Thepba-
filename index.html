@@ -1,26 +1,15 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>v7</title><style>
-body{font-family:sans-serif;background:#121824;color:#f8fafc;padding:5px}
-.ct{max-width:850px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:768px){.ct{grid-template-columns:1fr}}
-.cd{background:#1e293b;border-radius:10px;padding:12px}
-.c-B{color:#f87171}.c-P{color:#60a5fa}
-.sc-r{font-weight:bold;letter-spacing:1px;margin:5px 0;word-wrap:break-word}
-.dn-s{background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;margin-top:5px}
-.dn-h{display:flex;justify-content:space-between;margin-top:5px;font-weight:bold;font-size:0.85rem}
-.dn-g{display:flex;flex-wrap:wrap;gap:4px;font-size:0.95rem;margin-top:3px;min-height:30px;padding:4px;background:rgba(0,0,0,0.15);border-radius:4px;width:100%;box-sizing:border-box}
-.f-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.f-g input{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:5px;border-radius:4px;box-sizing:border-box}
-.gd3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
-.btn{border:none;padding:8px;border-radius:4px;font-weight:bold;cursor:pointer;color:#fff}
-.dp{border:2px solid #eab308;border-radius:6px;text-align:center;padding:6px;margin:8px 0;background:rgba(0,0,0,0.2)}
-.m-l{display:flex;justify-content:space-between;padding:3px 0;font-size:0.8rem}
-@keyframes bk{0%,100%{opacity:1}50%{opacity:0.3}}
-.blk{animation:bk 0.8s infinite;color:#eab308!important;border-color:#eab308!important}
-</style></head><body>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Compact AI - v7 Premium</title>
+</head>
+<body>
 <div class="ct">
+    <!-- ฝั่งซ้าย: AI DNA BOT (ไม่มีปุ่มเสมอ T) -->
     <div class="cd">
         <div style="text-align:center;font-weight:bold;color:#38bdf8;font-size:1rem">AI DNA Bot</div>
-        <div id="stM" style="text-align:center;font-size:0.75rem;padding:2px;color:#f87171">กรอกให้ครบ 15 เปิด</div>
+        <div id="stM" style="text-align:center;font-size:0.75rem;padding:2px;color:#f87171">กรอกให้ครบ 15 เปิด (ปัจจุบัน: 0)</div>
         <div style="font-size:0.85rem">Win Rate: <span id="wRT" style="color:#eab308;font-weight:bold">0%</span> | ผล (<span id="lCt">0</span>):</div>
         <div id="sBd" class="sc-r"></div>
         <div class="dn-s">
@@ -28,56 +17,103 @@ body{font-family:sans-serif;background:#121824;color:#f8fafc;padding:5px}
             <div class="dn-h"><span style="color:#eab308">หมวด 2: Swing สลับ</span><span id="p2">-</span></div><div id="dn2" class="dn-g"></div>
             <div class="dn-h"><span style="color:#eab308">หมวด 3: Follow มังกร</span><span id="p3">-</span></div><div id="dn3" class="dn-g"></div>
         </div>
-        <div class="gd3">
-            <button class="btn" style="background:#2563eb" onclick="add('P')">P</button><button class="btn" style="background:#16a34a" onclick="add('T')">T</button><button class="btn" style="background:#dc2626" onclick="add('B')">B</button>
+        <div class="gd2">
+            <button class="btn" style="background:#2563eb;font-size:1.2rem" onclick="add('P')">P</button>
+            <button class="btn" style="background:#dc2626;font-size:1.2rem" onclick="add('B')">B</button>
         </div>
-        <div style="display:flex;gap:5px;margin-top:5px;"><button class="btn" style="background:#475569;width:100%" onclick="ud()">Undo</button><button class="btn" style="background:#475569;width:100%" onclick="cl()">ล้างบอร์ด</button></div>
+        <div style="display:flex;gap:5px;margin-top:5px;">
+            <button class="btn" style="background:#475569;width:100%;padding:6px;font-size:0.8rem" onclick="ud()">Undo</button>
+            <button class="btn" style="background:#475569;width:100%;padding:6px;font-size:0.8rem" onclick="cl()">ล้างบอร์ด</button>
+        </div>
     </div>
+
+    <!-- ฝั่งขวา: ระบบคำนวณเป้าหมายรายวัน และบวกยอดทุนอัตโนมัติ -->
     <div class="cd">
-        <div style="text-align:center;font-weight:bold;color:#eab308;font-size:1rem">ระบบเดินเงิน (ทบ 2 ไม้)</div>
+        <div style="text-align:center;font-weight:bold;color:#eab308;font-size:1rem;padding-bottom:3px">ระบบวางแผนและเป้าหมาย</div>
         <div class="f-g">
-            <div><label style="font-size:0.7rem;color:#94a3b8">ทุนเริ่มต้น</label><input type="number" id="iCp" value="1000" onchange="rsM()"></div>
-            <div><label style="font-size:0.7rem;color:#94a3b8">ไม้เริ่ม</label><input type="number" id="iBb" value="50" onchange="rsM()"></div>
+            <div><span style="font-size:0.65rem;color:#94a3b8">ทุนตั้งต้น (฿)</span><input type="number" id="iCp" value="1000" oninput="cal()"></div>
+            <div><span style="font-size:0.65rem;color:#94a3b8">เป้ากำไร (%)</span><input type="number" id="iWinPct" value="20" oninput="cal()"></div>
+            <div><span style="font-size:0.65rem;color:#94a3b8">ตัดขาดทุน (%)</span><input type="number" id="iLosePct" value="50" oninput="cal()"></div>
         </div>
-        <div style="background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;line-height:1.3;">
-            <div class="m-l"><span>ทุนตั้งต้น:</span><span id="lOrig">1,000 ฿</span></div>
-            <div class="m-l"><span>เครดิตเหลือ:</span><span id="lCp" style="color:#4ade80;font-weight:bold">1,000 ฿</span></div>
-            <div class="m-l"><span>สถานะรอบ:</span><span id="lSt" style="color:#eab308">ไม้เริ่มต้น</span></div>
+        
+        <div class="dn-s" style="font-size:0.8rem;line-height:1.4">
+            <div class="m-l"><span>เป้ากำไรที่ต้องทำได้:</span><span id="lWinCash" style="color:#4ade80;font-weight:bold">0 ฿</span></div>
+            <div class="m-l"><span>ยอดขาดทุนสูงสุดที่ยอมรับ:</span><span id="lLoseCash" style="color:#f87171;font-weight:bold">0 ฿</span></div>
+            <div class="m-l" style="border-top:1px solid #334155;margin-top:4px;padding-top:4px"><span style="color:#4ade80;font-weight:bold">เป้าหมายเงินรวมต้น (ต้องทำถึง):</span><span id="tP" style="color:#4ade80;font-weight:bold">0 ฿</span></div>
+            <div class="m-l"><span style="color:#f87171;font-weight:bold">เงินรวมต้นเมื่อตัดขาดทุน:</span><span id="tL" style="color:#f87171;font-weight:bold">0 ฿</span></div>
         </div>
-        <div class="f-g" style="margin-top:5px;">
-            <div><label style="color:#4ade80;font-size:0.7rem;font-weight:bold">เป้ากำไร (%)</label><input type="number" id="iWinPct" value="20" onchange="upM()"></div>
-            <div><label style="color:#f87171;font-size:0.7rem;font-weight:bold">ตัดขาดทุน (%)</label><input type="number" id="iLosePct" value="50" onchange="upM()"></div>
+
+        <!-- ปรับแต่งช่องกรอกตามรูปภาพที่ส่งมา: แสดงเลข 0 ลางๆ พิมพ์แทนที่ได้ทันที -->
+        <div style="margin-top:6px;background:rgba(0,0,0,0.15);padding:6px;border-radius:6px">
+            <span style="font-size:0.75rem;color:#cbd5e1;display:block;text-align:center">กรอกจำนวนเงินเต็ม "รวมทุนทั้งหมดล่าสุด" ณ ตอนนี้ (฿)</span>
+            <input type="number" id="actTotal" placeholder="0" oninput="cal()" style="width:100%;background:#0f172a;border:1px solid #334155;color:#eab308;padding:6px;border-radius:4px;box-sizing:border-box;font-size:1.2rem;text-align:center;font-weight:bold;margin-top:3px">
         </div>
-        <div style="background:rgba(0,0,0,0.3);padding:6px;border-radius:4px;font-size:0.8rem;margin-bottom:5px;">
-            <div class="m-l"><span>เป้ากำไรเป็นเงิน:</span><span id="lWinCash" style="color:#4ade80;font-weight:bold">0 ฿</span></div>
-            <div class="m-l"><span>ตัดขาดทุนเป็นเงิน:</span><span id="lLoseCash" style="color:#f87171;font-weight:bold">0 ฿</span></div>
+
+        <div id="bNB" class="dp">
+            <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;">สรุปผลกำไร / ขาดทุน จากเงินรวมที่กรอก</div>
+            <div id="bPV" style="font-size:1.2rem;font-weight:bold;color:#94a3b8">+0 ฿ (0.0%)</div>
+            <div style="font-size:0.75rem;color:#cbd5e1;margin-top:2px">เงินรวมทุนปัจจุบัน: <span id="lCpTxt" style="font-weight:bold;color:#38bdf8">1,000 ฿</span></div>
         </div>
-        <div id="bNB" class="dp"><div style="font-size:0.8rem">จำนวนเงินตาถัดไป</div><div id="nxA" style="font-size:1.5rem;font-weight:bold;color:#eab308">50 ฿</div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="btn" style="background:#16a34a" onclick="hM(true)">WIN</button><button class="btn" style="background:#dc2626" onclick="hM(false)">LOSE</button>
-        </div>
-        <button class="btn" style="background:#334155;width:100%;margin-top:5px" onclick="rsM()">รีเซ็ตเดินเงิน</button>
-        <div style="border:2px dashed #16a34a;border-radius:6px;text-align:center;padding:8px;margin-top:8px;background:rgba(22,163,74,0.1)">
-            <div style="font-size:0.75rem;color:#94a3b8">ผลกำไร / ขาดทุนสุทธิทั้งหมด</div>
-            <div id="bPV" style="font-size:1.8rem;font-weight:900;color:#4ade80">0 ฿ (0.0%)</div>
+
+        <div class="gd2" style="margin-top:0">
+            <button class="btn" style="background:#10b981;font-size:0.85rem" onclick="saveD()">💾 บันทึกผลรายวัน</button>
+            <button class="btn" style="background:#ef4444;font-size:0.85rem" onclick="clLog()">❌ ล้างประวัติเดือนนี้</button>
         </div>
     </div>
 </div>
+
+<!-- ส่วนตารางบันทึกประจำวันเพื่อสรุปผลรายเดือน -->
+<div id="repSec" class="cd" style="max-width:850px;margin:10px auto;font-size:0.75rem;display:none">
+    <div style="font-weight:bold;margin-bottom:6px;color:#cbd5e1;display:flex;justify-content:between">
+        <span>📊 ตารางบันทึกผลประจำวัน (สะสมรายเดือน)</span>
+        <span id="mSummary" style="color:#eab308;margin-left:auto">รวมเดือนนี้: 0 ฿</span>
+    </div>
+    <div style="max-height:200px;overflow-y:auto">
+        <table style="width:100%;text-align:left;border-collapse:collapse">
+            <thead><tr style="color:#94a3b8;border-bottom:1px solid #334155"><th style="padding:4px">ลำดับวัน</th><th style="padding:4px">ทุนเริ่มต้น</th><th style="padding:4px">ผลกำไร/ขาดทุน</th><th style="padding:4px">รวมยอดสุทธิ</th></tr></thead>
+            <tbody id="repBody"></tbody>
+        </table>
+    </div>
+</div>
+<style>
+body{font-family:sans-serif;background:#121824;color:#f8fafc;padding:5px}
+.ct{max-width:850px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:768px){.ct{grid-template-columns:1fr}}
+.cd{background:#1e293b;border-radius:10px;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
+.c-B{color:#f87171}.c-P{color:#60a5fa}
+.sc-r{font-weight:bold;letter-spacing:1px;margin:5px 0;word-wrap:break-word;font-size:0.9rem;min-height:22px}
+.dn-s{background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;margin-top:5px}
+.dn-h{display:flex;justify-content:space-between;margin-top:5px;font-weight:bold;font-size:0.85rem}
+.dn-g{display:flex;flex-wrap:wrap;gap:4px;font-size:0.85rem;margin-top:3px;min-height:26px;padding:4px;background:rgba(0,0,0,0.15);border-radius:4px;width:100%;box-sizing:border-box}
+.f-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px}
+.f-g input{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:5px;border-radius:4px;box-sizing:border-box;font-weight:bold;text-align:center}
+.gd2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.btn{border:none;padding:10px;border-radius:4px;font-weight:bold;cursor:pointer;color:#fff;transition:transform 0.1s}
+.btn:active{transform:scale(0.95)}
+.dp{border:2px solid #334155;border-radius:6px;text-align:center;padding:8px;margin:6px 0;background:rgba(0,0,0,0.2)}
+.m-l{display:flex;justify-content:space-between;padding:3px 0;font-size:0.8rem}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:0.3}}
+.blk{animation:bk 0.8s infinite;color:#eab308!important;border-color:#eab308!important;background:rgba(234,179,8,0.15)!important}
+input::placeholder{color:#64748b;opacity:0.6} /* ปรับสไตล์ตัวหนังสือลางๆ ในช่องอินพุต */
+</style>
 <script>
-let sc=[],cp=1000,bb=50,stk=0;
+let sc=[];
+
 function update(){
     document.getElementById('sBd').innerHTML=sc.map(s=>`<span class="c-${s}">${s}</span>`).join(' ');
     document.getElementById('lCt').innerText=sc.length;
     document.getElementById('dn1').innerHTML=document.getElementById('dn2').innerHTML=document.getElementById('dn3').innerHTML='';
     document.getElementById('p1').innerText=document.getElementById('p2').innerText=document.getElementById('p3').innerText='-';
+    
     if(sc.length<15){
         document.getElementById('stM').innerText=`กรอกให้ครบ 15 เปิด (ปัจจุบัน: ${sc.length})`;
         document.getElementById('stM').style.color='#f87171';document.getElementById('wRT').innerText="0%";return;
     }
     document.getElementById('stM').innerText="ครบ 15 เปิดแล้ว พร้อมวิเคราะห์";document.getElementById('stM').style.color='#4ade80';
+    
     let d1=[],d2=[],d3=[];
     for(let i=0;i<sc.length;i++){
-        let h=sc.slice(0,i),a=sc[i];if(a==='T')continue;
+        let h=sc.slice(0,i),a=sc[i];
         let p1=f1(h),p2=f2(h),p3=f3(h);
         if(p1)d1.push(p1===a?'✔️':'❌');if(p2)d2.push(p2===a?'✔️':'❌');if(p3)d3.push(p3===a?'✔️':'❌');
     }
@@ -86,35 +122,102 @@ function update(){
     let all=[...d1,...d2,...d3],cr=all.filter(d=>d==='✔️').length,r=all.length>0?Math.round((cr/all.length)*100):50;
     document.getElementById('wRT').innerText=`${r}%`;
 }
+
 function tP(id,sd){
     let el=document.getElementById(id);if(!sd){el.innerText="-";return}
     if(sd==='B'){el.innerHTML=`[ <span class="c-B">B</span>=✔️ ] &nbsp;&nbsp; [ <span class="c-P">P</span>=❌ ]`}
     else{el.innerHTML=`[ <span class="c-B">B</span>=❌ ] &nbsp;&nbsp; [ <span class="c-P">P</span>=✔️ ]`}
 }
-function f1(h){let c=h.filter(s=>s!=='T');if(c.length<2)return 'B';return c[c.length-1]===c[c.length-2]?c[c.length-1]:(c[c.length-1]==='B'?'P':'B')}
-function f2(h){let c=h.filter(s=>s!=='T');return c.length<1?'P':(c[c.length-1]==='B'?'P':'B')}
-function f3(h){let c=h.filter(s=>s!=='T');if(c.length<3)return 'B';let l=c.length;if(c[l-1]===c[l-2]&&c[l-2]===c[l-3])return c[l-1];return c[l-1]==='B'?'B':'P'}
-function add(t){sc.push(t);update()}function ud(){sc.pop();update()}function cl(){if(confirm("ล้างบอร์ด?")){sc=[];update()}}
-document.addEventListener('keydown',e=>{if(e.key==='q'||e.key==='Q')add('P');if(e.key==='w'||e.key==='W')add('T');if(e.key==='e'||e.key==='E')add('B');if(e.key==='z'||e.key==='Z')ud()});
-function rsM(){cp=parseFloat(document.getElementById('iCp').value)||1000;bb=parseFloat(document.getElementById('iBb').value)||50;stk=0;upM()}
-function hM(w){
-    let b=cB();
-    if(w){cp+=b;stk+=1;if(stk>=2){stk=0;}}else{cp-=b;stk=0}
-    upM();
+
+function f1(h){if(h.length<2)return 'B';return h[h.length-1]===h[h.length-2]?h[h.length-1]:(h[h.length-1]==='B'?'P':'B')}
+function f2(h){return h.length<1?'P':(h[h.length-1]==='B'?'P':'B')}
+function f3(h){if(h.length<3)return 'B';let l=h.length;if(h[l-1]===h[l-2]&&h[l-2]===h[l-3])return h[l-1];return h[l-1]==='B'?'B':'P'}
+// ค้นหาช่วงบรรทัดนี้ในโค้ดชุดที่ 3 เดิมของคุณ:
+function add(t){sc.push(t);update()}function ud(){sc.pop();update()}
+
+function cl(){ sc=[]; update(); } // <--- เอาบรรทัดใหม่นี้มาวางแทนที่ของเก่าตรงนี้ครับ
+document.addEventListener('keydown',e=>{
+
+    if(e.key==='q'||e.key==='Q')add('P');
+    if(e.key==='e'||e.key==='E')add('B');
+    if(e.key==='z'||e.key==='Z')ud()
+});
+
+// --- ระบบวิเคราะห์เป้าหมายแบบหักลบทุนรวมอัตโนมัติ ---
+function cal(){
+    let c = parseFloat(document.getElementById('iCp').value)||1000;
+    let wP = parseFloat(document.getElementById('iWinPct').value)||20;
+    let lP = parseFloat(document.getElementById('iLosePct').value)||50;
+    
+    // ดักจับช่องกรอกเงินรวมล่าสุด ถ้าว่างเปล่าให้ถือเป็นยอดเงินเท่าทุนเริ่มต้น
+    let inputVal = document.getElementById('actTotal').value;
+    let currentTotal = inputVal === "" ? c : parseFloat(inputVal);
+
+    // คำนวณหาผลต่าง กำไร หรือ ขาดทุน จริงจากการลบยอดทุนตั้งต้น
+    let actualProfit = currentTotal - c;
+
+    let wAmt = (c * wP) / 100;
+    let lAmt = (c * lP) / 100;
+
+    document.getElementById('lWinCash').innerText = `${wAmt.toLocaleString()} ฿`;
+    document.getElementById('lLoseCash').innerText = `${lAmt.toLocaleString()} ฿`;
+    document.getElementById('tP').innerText = `${(c + wAmt).toLocaleString()} ฿`;
+    document.getElementById('tL').innerText = `${(c - lAmt).toLocaleString()} ฿`;
+
+    let nP = c > 0 ? ((actualProfit / c) * 100).toFixed(1) : 0;
+    let bV = document.getElementById('bPV'), bNB = document.getElementById('bNB');
+    
+    // แสดงผลกำไร/ขาดทุนสุทธิ
+    bV.innerText = `${actualProfit >= 0 ? '+' : ''}${actualProfit.toLocaleString()} ฿ (${nP}%)`;
+    bV.style.color = actualProfit > 0 ? '#4ade80' : (actualProfit < 0 ? '#f87171' : '#94a3b8');
+    document.getElementById('lCpTxt').innerText = `${currentTotal.toLocaleString()} ฿`;
+
+    // ระบบแจ้งเตือนไฟกะพริบเมื่อยอดเงินรวมถึงเป้าหมายกำไรรวมต้น (c + wAmt)
+    if(currentTotal >= (c + wAmt) && wAmt > 0){ bNB.classList.add('blk'); } else { bNB.classList.remove('blk'); }
 }
-function cB(){return stk===0?bb:bb*2}
-function upM(){
-    let b=cB(),iC=parseFloat(document.getElementById('iCp').value)||1000,p=cp-iC,pP=((p/iC)*100).toFixed(1);
-    let wP=parseFloat(document.getElementById('iWinPct').value)||20,lP=parseFloat(document.getElementById('iLosePct').value)||50;
-    document.getElementById('lWinCash').innerText=`${((iC*wP)/100).toLocaleString()} ฿`;
-    document.getElementById('lLoseCash').innerText=`${((iC*lP)/100).toLocaleString()} ฿`;
-    document.getElementById('lOrig').innerText=`${iC.toLocaleString()} ฿`;
-    document.getElementById('lCp').innerText=`${cp.toLocaleString()} ฿`;
-    document.getElementById('lSt').innerText=stk>0?`ชนะทบ: ไม้ ${stk+1}`:`ไม้เริ่มต้น`;
-    let bNB=document.getElementById('bNB'),nxA=document.getElementById('nxA');
-    if(parseFloat(pP)>=wP){nxA.innerText="🎯 ถึงเป้าหมายแล้ว!";bNB.classList.add('blk')}else{nxA.innerText=`${b.toLocaleString()} ฿`;bNB.classList.remove('blk')}
-    let bV=document.getElementById('bPV');bV.innerText=`${p>=0?'+':''}${p.toLocaleString()} ฿ (${pP}%)`;
-    bV.style.color=p>=0?'#4ade80':'#f87171';
+
+// --- ระบบบันทึกสะสมรายวัน โดยไม่ล้างช่องทุนตั้งต้นเดิม ---
+function saveD() {
+    let c = parseFloat(document.getElementById('iCp').value)||1000;
+    let inputVal = document.getElementById('actTotal').value;
+    let currentTotal = inputVal === "" ? c : parseFloat(inputVal);
+    let actualProfit = currentTotal - c;
+    
+    let r = JSON.parse(localStorage.getItem('v7_daily_ledger')) || [];
+    let nextDay = r.length + 1;
+    
+    r.push({ day: nextDay, date: new Date().toLocaleDateString('th-TH'), c: c, a: actualProfit, t: currentTotal });
+    localStorage.setItem('v7_daily_ledger', JSON.stringify(r));
+    
+    alert(`บันทึกข้อมูล วันที่ ${nextDay} เรียบร้อยแล้ว!`);
+    
+    // ล้างเฉพาะค่าในช่องเงินรวม เพื่อพร้อมรับค่าใหม่ (เลข 0 จะโชว์ลางๆ) ส่วนทุนตั้งต้นจะค้างไว้เหมือนเดิม
+    document.getElementById('actTotal').value = ""; 
+    cal(); showM();
 }
-rsM();update();
-</script></body></html>
+
+function showM() {
+    let r = JSON.parse(localStorage.getItem('v7_daily_ledger')) || [], b = document.getElementById('repBody');
+    let mSum = 0;
+    if (r.length > 0) {
+        document.getElementById('repSec').style.display = 'block'; b.innerHTML = '';
+        r.forEach(x => {
+            mSum += x.a;
+            b.innerHTML += `<tr style="border-bottom:1px solid #1e293b"><td style="padding:5px;color:#94a3b8">Day ${x.day} (${x.date})</td><td style="padding:5px">${x.c.toLocaleString()} ฿</td><td style="padding:5px;font-weight:bold;color:${x.a >= 0 ? '#4ade80' : '#f87171'}">${x.a >= 0 ? '+' : ''}${x.a.toLocaleString()} ฿</td><td style="padding:5px;color:#38bdf8;font-weight:bold">${x.t.toLocaleString()} ฿</td></tr>`;
+        });
+        document.getElementById('mSummary').innerText = `รวมเดือนนี้: ${mSum >= 0 ? '+' : ''}${mSum.toLocaleString()} ฿`;
+    } else {
+        document.getElementById('repSec').style.display = 'none';
+    }
+}
+
+function clLog(){
+    if(confirm("คุณต้องการล้างประวัติประจำวันทั้งหมดของเดือนนี้ใช่ไหม?")){
+        localStorage.removeItem('v7_daily_ledger'); showM();
+    }
+}
+
+cal(); update(); showM();
+</script>
+</body>
+</html>
